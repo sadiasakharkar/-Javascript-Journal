@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>Dynamic Registration Form</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+  <style>
+    /* Body and Background */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #42a5f5, #7e57c2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* Rotating and Pulsing Shapes */
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      animation: pulse 5s infinite ease-in-out;
+      z-index: -1;
+    }
+    .shape.circle {
+      width: 300px;
+      height: 300px;
+      background: #ffeb3b;
+      top: -100px;
+      left: 70%;
+      animation: rotate 20s infinite linear, pulse 6s infinite ease-in-out;
+    }
+    .shape.square {
+      width: 200px;
+      height: 200px;
+      background: #ff7043;
+      border-radius: 15px;
+      top: 70%;
+      left: 5%;
+      animation: rotateReverse 20s infinite linear, pulse 8s infinite ease-in-out;
+    }
+    .shape.triangle {
+      width: 0;
+      height: 0;
+      border-left: 100px solid transparent;
+      border-right: 100px solid transparent;
+      border-bottom: 200px solid #29b6f6;
+      top: 30%;
+      left: 15%;
+      transform: rotate(30deg);
+      animation: rotate 25s infinite linear, pulse 7s infinite ease-in-out;
+    }
+
+    /* Keyframes for Animations */
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes rotateReverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Form Container */
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      width: 400px;
+      position: relative;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    /* Fade-in Animation */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #7e57c2;
+      font-weight: bold;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+    }
+
+    /* Form Fields */
+    .form-group {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #555;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #7e57c2;
+      box-shadow: 0 0 8px rgba(126, 87, 194, 0.3);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      font-size: 0.875em;
+      color: #7e57c2;
+      cursor: help;
+      animation: tooltipPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes tooltipPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .error-message {
+      color: #f44336;
+      font-size: 0.875em;
+      margin-top: 5px;
+    }
+
+    .valid-input {
+      border-color: #4caf50;
+    }
+
+    .invalid-input {
+      border-color: #f44336;
+    }
+
+    /* Submit Button */
+    button {
+      background-color: #7e57c2;
+      color: white;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #5e35b1;
+      transform: translateY(-3px);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body ng-controller="FormController as ctrl">
+
+<div class="shape circle"></div>
+<div class="shape square"></div>
+<div class="shape triangle"></div>
+
+<div class="container">
+  <h2>Register Now</h2>
+  <form name="registrationForm" ng-submit="ctrl.submitForm()" novalidate>
+
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" ng-model="ctrl.user.name" required
+             ng-class="{'valid-input': registrationForm.name.$valid, 'invalid-input': registrationForm.name.$touched && registrationForm.name.$invalid}">
+      <span class="error-message" ng-show="registrationForm.name.$touched && registrationForm.name.$invalid">Name is required.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" ng-model="ctrl.user.email" required
+             ng-class="{'valid-input': registrationForm.email.$valid, 'invalid-input': registrationForm.email.$touched && registrationForm.email.$invalid}">
+      <span class="tooltip" title="Please enter a valid email address.">?</span>
+      <span class="error-message" ng-show="registrationForm.email.$touched && registrationForm.email.$invalid">Valid email is required.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" ng-model="ctrl.user.phone" required pattern="^\d{10}$"
+             ng-class="{'valid-input': registrationForm.phone.$valid, 'invalid-input': registrationForm.phone.$touched && registrationForm.phone.$invalid}">
+      <span class="tooltip" title="Enter 10-digit phone number.">?</span>
+      <span class="error-message" ng-show="registrationForm.phone.$touched && registrationForm.phone.$invalid">10-digit phone number required.</span>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" ng-model="ctrl.user.password" required minlength="8"
+             ng-class="{'valid-input': registrationForm.password.$valid, 'invalid-input': registrationForm.password.$touched && registrationForm.password.$invalid}">
+      <span class="error-message" ng-show="registrationForm.password.$touched && registrationForm.password.$invalid">Password must be at least 8 characters.</span>
+    </div>
+
+    <div class="form-group" ng-show="registrationForm.password.$valid">
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" ng-model="ctrl.user.confirmPassword" required
+             ng-class="{'valid-input': registrationForm.confirmPassword.$valid && ctrl.user.confirmPassword === ctrl.user.password, 'invalid-input': registrationForm.confirmPassword.$touched && ctrl.user.confirmPassword !== ctrl.user.password}">
+      <span class="error-message" ng-show="registrationForm.confirmPassword.$touched && ctrl.user.confirmPassword !== ctrl.user.password">Passwords do not match.</span>
+    </div>
+
+    <button type="submit" ng-disabled="registrationForm.$invalid">Register</button>
+  </form>
+</div>
+
+<script>
+    angular.module('myApp', [])
+    .controller('FormController', function($http) {
+      var vm = this;
+      vm.user = {};
+  
+      vm.submitForm = function(registrationForm) {
+        // Ensure form is valid and passwords match
+        if (registrationForm.$valid && vm.user.password === vm.user.confirmPassword) {
+          // Simulate backend call to '/api/register'
+          $http.post('/api/register', vm.user)
+            .then(function(response) {
+              alert('Registration successful');
+            })
+            .catch(function(error) {
+              console.error('Error:', error);
+              alert('Registration failed');
+            });
+        } else {
+          alert('Please fill out the form correctly.');
+        }
+      };
+    });
+  
+</script>
+
+</body>
+</html>

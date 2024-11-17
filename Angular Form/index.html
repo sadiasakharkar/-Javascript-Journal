@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="studentFormApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Student Registration Form</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    /* Background Circles - Larger Sizes */
+    .background-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+    .circle1 {
+      width: 500px; /* Increased size */
+      height: 500px;
+      background-color: #007bff;
+      top: -150px;
+      left: -150px;
+    }
+    .circle2 {
+      width: 400px; /* Increased size */
+      height: 400px;
+      background-color: #28a745;
+      bottom: -200px;
+      right: -150px;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+
+    /* Form Container Styles */
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    .form-section {
+      margin-bottom: 15px;
+      transition: all 0.4s ease;
+      opacity: 1;
+      max-height: 300px;
+    }
+
+    .form-section.ng-hide {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control.ng-touched.ng-invalid {
+      border-color: #dc3545;
+    }
+
+    .form-control.ng-touched.ng-valid {
+      border-color: #28a745;
+    }
+
+    .form-control:focus {
+      box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.2);
+    }
+
+    .error-message {
+      font-size: 0.875em;
+      color: #dc3545;
+      padding-top: 5px;
+    }
+
+    .btn-primary {
+      border-radius: 8px;
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0056b3 0%, #003f7d 100%);
+    }
+  </style>
+</head>
+<body ng-controller="FormController as ctrl">
+
+  <!-- Floating Background Circles -->
+  <div class="background-circle circle1"></div>
+  <div class="background-circle circle2"></div>
+
+  <div class="container">
+    <h2> Registration Form</h2>
+    <form name="registrationForm" ng-submit="ctrl.submitForm()" novalidate>
+
+      <!-- Username Field -->
+      <div class="form-group form-section" ng-class="{'has-error': registrationForm.username.$touched && registrationForm.username.$invalid}">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" class="form-control" ng-model="ctrl.user.username" required>
+        <div ng-show="registrationForm.username.$touched && registrationForm.username.$invalid" class="error-message">Username is required.</div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group form-section" ng-class="{'has-error': registrationForm.email.$touched && registrationForm.email.$invalid}">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" ng-model="ctrl.user.email" required>
+        <div ng-show="registrationForm.email.$touched && registrationForm.email.$invalid" class="error-message">A valid email is required.</div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group form-section" ng-class="{'has-error': registrationForm.password.$touched && registrationForm.password.$invalid}">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" class="form-control" ng-model="ctrl.user.password" required minlength="8">
+        <div ng-show="registrationForm.password.$touched && registrationForm.password.$invalid">
+          <span class="error-message" ng-show="registrationForm.password.$error.required">Password is required.</span>
+          <span class="error-message" ng-show="registrationForm.password.$error.minlength">Password must be at least 8 characters.</span>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field - appears dynamically when password is valid -->
+      <div class="form-group form-section" ng-show="registrationForm.password.$valid">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="ctrl.user.confirmPassword" ng-required="registrationForm.password.$valid">
+        <div ng-show="registrationForm.confirmPassword.$touched && ctrl.user.password !== ctrl.user.confirmPassword" class="error-message">Passwords do not match.</div>
+      </div>
+
+      <!-- Role Selection - toggles more fields dynamically -->
+      <div class="form-group form-section">
+        <label for="role">Role:</label>
+        <select id="role" name="role" class="form-control" ng-model="ctrl.user.role" required>
+          <option value="" disabled selected>Select your role</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+
+      <!-- Student ID Field - appears only if the "Student" role is selected -->
+      <div class="form-group form-section" ng-show="ctrl.user.role === 'student'">
+        <label for="studentId">Student ID:</label>
+        <input type="text" id="studentId" name="studentId" class="form-control" ng-model="ctrl.user.studentId" ng-required="ctrl.user.role === 'student'">
+        <div ng-show="registrationForm.studentId.$touched && registrationForm.studentId.$invalid" class="error-message">Student ID is required.</div>
+      </div>
+
+      <!-- Additional Field for 'Teacher' Role - appears only if the "Teacher" role is selected -->
+      <div class="form-group form-section" ng-show="ctrl.user.role === 'teacher'">
+        <label for="subject">Subject Specialization:</label>
+        <input type="text" id="subject" name="subject" class="form-control" ng-model="ctrl.user.subject" ng-required="ctrl.user.role === 'teacher'">
+        <div ng-show="registrationForm.subject.$touched && registrationForm.subject.$invalid" class="error-message">Subject specialization is required for teachers.</div>
+      </div>
+
+      <!-- Submit Button - Disabled until all fields are valid -->
+      <button type="submit" class="btn btn-primary btn-block" ng-disabled="registrationForm.$invalid">Register</button>
+
+    </form>
+  </div>
+
+  <script>
+    // AngularJS Application
+    angular.module('studentFormApp', [])
+      .controller('FormController', function() {
+        var vm = this;
+        vm.user = {};
+
+        vm.submitForm = function() {
+          if (registrationForm.$valid) {
+            alert('Form submitted successfully!');
+          }
+        };
+      });
+  </script>
+
+</body>
+</html>

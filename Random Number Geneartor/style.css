@@ -1,0 +1,22 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    background-color:lightseagreen;
+}
+
+#myButton{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7%;
+    font-size: 3em;
+    cursor: pointer;
+    color :aliceblue;
+    background-color: darkcyan;
+    transition: background-color 0.25s;
+}
+#myButton:hover{
+    background-color: rgb(26, 169, 121);
+}
+.myLabels {
+    font-size: 3em;
+}
